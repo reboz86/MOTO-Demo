@@ -1,0 +1,274 @@
+@(title: String)(content: Html)
+
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- header -->
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="description" content="Offloading APP">
+<meta name="author"
+	content="Thales Communications & Security / UPMC Sorbonne Universités">
+
+<!-- Note there is no responsive meta tag here -->
+
+<link rel="shortcut icon" href="@routes.Assets.at("images/MOTOLogo.png")">
+
+<title>@title</title>
+
+<!-- Bootstrap core CSS -->
+<link href="@routes.Assets.at("
+	stylesheets/bootstrap.min.css")" media="screen" type="text/css"
+	rel="stylesheet">
+
+<script src="@routes.Assets.at("
+	javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
+
+<!-- Custom styles for this template -->
+<!--<link href="@routes.Assets.at("stylesheets/jumbotron-narrow.css")" rel="stylesheet"-->
+</head>
+
+<!-- body -->
+<body>
+	<div class="container">
+		<div class="header">
+			<nav class="navbar navbar-default " role="navigation">
+				<div class="container-fluid">
+
+					<!-- Brand and toggle get grouped for better mobile display -->
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle" data-toggle="collapse"
+							data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span> <span
+								class="icon-bar"></span> <span class="icon-bar"></span> <span
+								class="icon-bar"></span>
+						</button>
+						<a font size="16" class="navbar-brand"
+							href="http://www.fp7-moto.eu/"><font size="5">FP7 MOTO</font></a>
+					</div>
+
+					<div class="collapse navbar-collapse"
+						id="bs-example-navbar-collapse-1"
+						style="line-height: 45px; height: 45px;">
+						<ul class="nav navbar-nav">
+							<li class="active"><a href="#"><font size="4">Home</a></font></li>
+							<li><a href="#"><font size="4">About</a></font></li>
+							<li><a href="#"><font size="4">Contact</a></font></li>
+						</ul>
+
+						<ul class="nav navbar-nav navbar-right">
+							<li><a href="http://www.fp7-moto.eu/"><img
+									src="@routes.Assets.at(" images/MOTOLogo.png")" height="30"></a></li>
+						</ul>
+					</div>
+
+				</div>
+			</nav>
+		</div>
+	</div>
+
+	<p>
+		<!-- Main jumbotron for a primary marketing message or call to action -->
+	<div class="jumbotron">
+		<div class="container" align="left">
+			<h1>Offloading Demo</h1>
+			<p></p>
+			<p>
+
+				<!-- upload image -->
+			<form id="file-form" action="handler.php"
+				enctype="multipart/form-data" method="POST">
+				<div class="row">
+					<label for="fileToUpload">Select Files to Upload</label><br /> <input
+						type="file" id="file-select" name="photo"
+						onchange="handleFileSelect()" accept="image/*" />
+					<output id="filesInfo"></output>
+
+					<div class="row">
+						<div class="col-md-2">
+							<label for="timeLife">Offloading time</label> <select
+								class="form-control" style="width: 120px">
+								<option>30 s</option>
+								<option>60 s</option>
+								<option>90 s</option>
+								<option>120 s</option>
+							</select> <br>
+							<div class="col-md-2;centered">
+								<input type="submit" id="upload-button" class="btn btn-primary"
+									value="Offload !!!" disabled="disabled"
+									onclick="upload(event); updateProgressBar()"
+									style="width: 120px">
+							</div>
+						</div>
+
+						<div class="col-md-2">
+							<label for="algo">Algorithm</label> <select class="form-control"
+								style="width: 120px">
+								<option>Initial</option>
+								<option>Derivative</option>
+								<option>Linear</option>
+								<option>Infra</option>
+							</select> <br>
+							<div class="col-md-2;centered">
+								<input type="submit" id="panic-button" class="btn btn-danger"
+									value="Panic !!!" disabled="disabled" onclick="panic(event)"
+									style="width: 120px" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+
+
+			<!-- Handle upload -->
+			<script>
+					function handleFileSelect() {
+						var oFReader = new FileReader();
+						oFReader.readAsDataURL(document
+								.getElementById("file-select").files[0]);
+
+						oFReader.onload = function(oFREvent) {
+							var span = document.createElement('span');
+							span.innerHTML = [ '<img class="thumbnail" src="',  oFREvent.target.result,
+                             '"/>' ]
+									.join('');
+							document.getElementById('filesInfo').insertBefore(
+									span, null);
+							$('#upload-button').removeAttr('disabled');
+
+							document.getElementById('progressouter').style.visibility = "visible";
+							$("#progress").css('width', '0%');
+						};
+
+					};
+				</script>
+
+
+			<!-- UPload FORM with data -->
+			<script>
+					function upload() {
+
+						var form = document.getElementById('file-form');
+						var fileSelect = document.getElementById('file-select');
+						var uploadButton = document
+								.getElementById('upload-button');
+
+						form.onsubmit = function(event) {
+
+							event.preventDefault();
+							var files = fileSelect.files;
+							var formData = new FormData();
+							var file = files[0];
+
+							// Add the file to the request.
+							formData.append('photo', file, file.name);
+
+							// Set up the request.
+							var xhr = new XMLHttpRequest();
+
+							// Try to send the data.
+							try {
+								// Open the connection.
+								xhr.open('POST', 'handler.php', true);
+								xhr.send(formData);
+
+							} catch (e) {
+								// display status message
+								alert("There was a problem retrieving the data:\n"
+										+ xhr.statusText);
+							}
+
+							$("#progress").css('width', '0%');
+							/* and display the numeric value */
+							$("#progress").html('0%');
+							$('#panic-button').removeAttr('disabled');
+
+						};
+					};
+				</script>
+
+			<!-- Send a PANIC request -->
+			<script>
+					function panic() {
+						// Set up the request.
+						var xhr = new XMLHttpRequest();
+
+						// Open the connection.
+						xhr.open('GET', 'panic.php', true);
+
+						// Send the Data.
+						xhr.send(null);
+
+					};
+				</script>
+
+			<br>
+			<div class="progress progress-striped active" id="progressouter"
+				style="visibility: hidden">
+				<div class="progress-bar" id="progress" role="progressbar"
+					aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+					style="width: 40%">
+					<span class="sr-only">0% Complete</span>
+				</div>
+			</div>
+			</p>
+
+
+			<!-- Handle AJAX requests for progress bar -->
+			<script type="text/javascript">
+					function updateProgressBar() {
+
+						$(document).ready(
+								function() {
+									var progresspump = setInterval(function() {
+										/* query the completion percentage from the server */
+										$.get("/update", function(data) {
+											/* update the progress bar width */
+											$("#progress").css('width',
+													data + '%');
+											/* and display the numeric value */
+											$("#progress").html(data + '%');
+
+											/* test to see if the job has completed */
+											if (data > 99.999) {
+												clearInterval(progresspump);
+												$("#progressouter")
+														.removeClass("active");
+												$("#progress").html("Done");
+											}
+										})
+									}, 500);
+								});
+					}
+				</script>
+		</div>
+	</div>
+
+	<!-- FOOTER -->
+	<div class="navbar navbar-default navbar-fixed-bottom"
+		style="height: 2px;">
+		<div class="container-fluid">
+			<p class="navbar-text pull-left">
+				<font size="2">©<a href="http://thalesgroup.com"> Thales
+						Communications &amp; Security</a> and <a href="http://upmc.fr">UPMC
+						Sorbonne Universités</a> 2013-2014 · <a href="#">Privacy</a> · <a
+					href="#">Terms</a>
+			</p>
+			<p class="navbar-text pull-right">
+				<a href="#"><font size="2">Back to top</a>
+			</p>
+		</div>
+	</div>
+
+
+
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
+</body>
+</html>

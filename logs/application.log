@@ -1,0 +1,6 @@
+2014-04-08 11:11:45,681 - [INFO] - from play in main 
+Listening for HTTP on port 9000...
+
+2014-04-08 11:11:47,782 - [INFO] - from play in play-akka.actor.default-dispatcher-4 
+Application started (Dev)
+
