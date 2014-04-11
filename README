@@ -1,4 +1,23 @@
-This is your new Play 2.0 application
-=====================================
+Two options to run the server : 
 
-This file will be packaged with your application, when using `play dist`.
+(1) Unzip dist/motooffloading-1.0-SNAPSHOT.zip
+
+    $bash start
+    
+
+or
+(2) you must have the play 2.0 framework installed.
+
+    inside the MOTO-DEMO folder 
+    
+    $play
+    $run
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------    
+To pack modifications or added files
+
+    inside the MOTO-DEMO folder 
+    
+    $play
+    $dist
